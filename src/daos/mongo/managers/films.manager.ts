@@ -22,7 +22,7 @@ export default class FilmsManagerMongo implements StarWars {
 			.find()
 			.populate({
 				path: "characters",
-				model: "peoples",
+				model: "people",
 				select: "name",
 				foreignField: "url",
 			})
@@ -57,7 +57,7 @@ export default class FilmsManagerMongo implements StarWars {
 			.findById(id)
 			.populate({
 				path: "characters",
-				model: "peoples",
+				model: "people",
 				select: "name",
 				foreignField: "url",
 			})
@@ -122,7 +122,7 @@ export default class FilmsManagerMongo implements StarWars {
 			},
 			{
 				$lookup: {
-					from: "peoples",
+					from: "people",
 					let: { characters: "$characters" },
 					pipeline: [
 						{ $match: { $expr: { $in: ["$url", "$$characters"] } } },

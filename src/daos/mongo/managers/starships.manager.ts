@@ -22,7 +22,7 @@ export default class StarshipsManagerMongo implements StarWars {
 			.find()
 			.populate({
 				path: "pilots",
-				model: "peoples",
+				model: "people",
 				select: "name _id",
 				foreignField: "url",
 			})
@@ -51,7 +51,7 @@ export default class StarshipsManagerMongo implements StarWars {
 			.findById(id)
 			.populate({
 				path: "pilots",
-				model: "peoples",
+				model: "people",
 				select: "name _id",
 				foreignField: "url",
 			})
@@ -89,7 +89,7 @@ export default class StarshipsManagerMongo implements StarWars {
 			matchStage,
 			{
 				$lookup: {
-					from: "peoples",
+					from: "people",
 					localField: "pilots",
 					foreignField: "url",
 					as: "pilots",
