@@ -79,7 +79,6 @@ export default class PlanetsController {
 	static async getPlanetsFiltered(
 		req: express.Request,
 		res: express.Response,
-		data: { query: string },
 		next: express.NextFunction
 	): Promise<void> {
 		try {
@@ -96,8 +95,6 @@ export default class PlanetsController {
 	static async updatePlanet(
 		req: express.Request,
 		res: express.Response,
-		id: string,
-		data: object,
 		next: express.NextFunction
 	): Promise<void> {
 		try {
