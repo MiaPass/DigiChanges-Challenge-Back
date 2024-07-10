@@ -7,13 +7,7 @@ import config from "../config/config.js";
 import indexRouter from "../routes/index.route.js";
 import CustomError from "./customError.js";
 
-const {
-	port,
-	url,
-}: {
-	port: number | string;
-	url: string | null;
-} = config.server;
+const { port }: { port: number | string } = config.server;
 
 class AppServer {
 	app: express.Application = express();
