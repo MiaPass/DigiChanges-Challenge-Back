@@ -27,8 +27,6 @@ class App {
 
 const app = new App();
 
-if (process.env.NODE_ENV !== "production") {
-	app.listen();
-}
+app.listen();
 
 export default app.getExpressApp();
