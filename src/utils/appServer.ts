@@ -28,7 +28,12 @@ class AppServer {
 		this.app.use("/api", indexRouter);
 
 		this.app.use(
-			(err: CustomError, req: express.Request, res: express.Response) => {
+			(
+				err: CustomError,
+				req: express.Request,
+				res: express.Response,
+				next: express.NextFunction
+			) => {
 				const status = err.status || 500;
 				const message = err.message || "";
 				res.status(status).send(message);
