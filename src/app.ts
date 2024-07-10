@@ -25,14 +25,10 @@ class App {
 	}
 }
 
-// Create and export a single instance of the App
 const app = new App();
-export default app;
 
-// If you want to run the server locally
 if (process.env.NODE_ENV !== "production") {
 	app.listen();
 }
 
-// Export the Express app for Vercel
-export const vercelHandler = app.getExpressApp();
+export default app.getExpressApp();

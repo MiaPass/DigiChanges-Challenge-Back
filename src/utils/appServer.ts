@@ -28,29 +28,13 @@ class AppServer {
 		this.app.use(express.urlencoded({ extended: true }));
 		this.app.use(cors());
 		this.app.use(cookieParser());
-		this.app.use(
-			(
-				req: express.Request,
-				res: express.Response,
-				next: express.NextFunction
-			) => {
-				res.header("Access-Control-Allow-Origin", "*");
-				res.header("Access-Control-Allow-Credentials", "true");
-				res.header(
-					"Access-Control-Allow-Headers",
-					"Origin, X-Requested-With, Content-Type, Accept"
-				);
-				res.header(
-					"Access-Control-Allow-Methods",
-					"GET, POST, OPTIONS, PUT, DELETE"
-				);
-				next();
-			}
-		);
 	}
 
 	build(): void {
 		this.app.use("/api", indexRouter);
+		this.app.use("*", (req, res) => {
+			res.status(404).json({ message: "Not Found" });
+		});
 		this.app.use(
 			(err: CustomError, req: express.Request, res: express.Response) => {
 				const status = err.status || 500;
@@ -61,16 +45,11 @@ class AppServer {
 	}
 
 	listen(): void {
-		url
-			? (this.server = this.app.listen(url, () => {
-					console.log(`Server running on ${url}`);
-			  }))
-			: (this.server = this.app.listen(port, () => {
-					console.log(`Server running on http://localhost:${port}`);
-			  }));
+		this.server = this.app.listen(port, () => {
+			console.log(`Server running on http://localhost:${port}`);
+		});
 	}
 
-	// Add this method to get the Express app
 	callBack(): express.Application {
 		return this.app;
 	}
