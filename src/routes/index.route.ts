@@ -5,10 +5,10 @@ import peopleRouter from "./people.route.js";
 import planetsRouter from "./planets.route.js";
 import starshipsRouter from "./starships.route.js";
 
-import FilmsService from "services/films.services.js";
-import PeopleService from "services/people.services.js";
-import PlanetsService from "services/planets.services.js";
-import StarshipsService from "services/starships.services.js";
+import FilmsService from "../services/films.services.js";
+import PeopleService from "../services/people.services.js";
+import PlanetsService from "../services/planets.services.js";
+import StarshipsService from "../services/starships.services.js";
 
 const router = Router();
 
