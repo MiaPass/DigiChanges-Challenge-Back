@@ -32,9 +32,7 @@ class AppServer {
 
 	build(): void {
 		this.app.use("/api", indexRouter);
-		this.app.use("*", (req, res) => {
-			res.status(404).json({ message: "Not Found" });
-		});
+
 		this.app.use(
 			(err: CustomError, req: express.Request, res: express.Response) => {
 				const status = err.status || 500;
