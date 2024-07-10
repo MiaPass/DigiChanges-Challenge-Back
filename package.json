@@ -4,7 +4,7 @@
 	"main": "dist/src/app.js",
 	"type": "module",
 	"scripts": {
-		"build": "tsc && tsc-alias",
+		"build": "tsc ",
 		"start": "tsc && tsc-alias && node dist/src/app.js"
 	},
 	"author": "Ianina Mia Passalia",
