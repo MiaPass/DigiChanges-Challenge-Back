@@ -7,6 +7,7 @@
 		"build": "tsc && tsc-alias",
 		"start": "tsc && tsc-alias && node dist/src/app.js"
 	},
+	"author": "Ianina Mia Passalia",
 	"license": "ISC",
 	"dependencies": {
 		"@types/cookie-parser": "^1.4.7",
