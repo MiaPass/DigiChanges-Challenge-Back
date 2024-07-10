@@ -4,6 +4,7 @@ dotenv.config();
 const config = {
 	server: {
 		port: process.env.PORT || 3000,
+		url: process.env.URL || null,
 		appEnv: process.env.NODE_ENV || "development",
 		persistence: process.env.PERSISTENCE || "MONGO",
 	},

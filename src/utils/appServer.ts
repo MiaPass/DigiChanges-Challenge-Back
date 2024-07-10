@@ -7,7 +7,13 @@ import config from "../config/config.js";
 import indexRouter from "../routes/index.route.js";
 import CustomError from "./customError.js";
 
-const { port }: { port: number | string } = config.server;
+const {
+	port,
+	url,
+}: {
+	port: number | string;
+	url: string | null;
+} = config.server;
 
 class AppServer {
 	app: express.Application = express();
@@ -54,10 +60,18 @@ class AppServer {
 		);
 	}
 
+	callBack() {
+		return this.app;
+	}
+
 	listen(): void {
-		this.server = this.app.listen(port, () => {
-			console.log(`Server running on http://localhost:${port}`);
-		});
+		url
+			? (this.server = this.app.listen(url, () => {
+					console.log(`Server running on ${url}`);
+			  }))
+			: (this.server = this.app.listen(port, () => {
+					console.log(`Server running on http://localhost:${port}`);
+			  }));
 	}
 }
 
