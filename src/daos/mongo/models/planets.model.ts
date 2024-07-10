@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-import PlanetInterface from "../../../types/interfaces/planets.interface";
+import PlanetInterface from "../../../types/interfaces/planets.interface.js";
 
 const planetsCollection: string = "planets";
 
@@ -11,6 +11,7 @@ const planetsSchema: Schema<PlanetInterface> = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	category: { type: String, required: true },
 	features: {
 		type: {
 			rotation_period: { type: String },

@@ -1,4 +1,4 @@
-import { starshipsDao } from "../daos/factory";
+import { starshipsDao } from "../daos/factory.js";
 
 export default class StarshipsService {
 	static async createStarships(data: object): Promise<object> {

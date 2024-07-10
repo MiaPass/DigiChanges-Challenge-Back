@@ -1,8 +1,8 @@
 import express from "express";
 import axios, { AxiosResponse } from "axios";
 
-import PlanetsService from "../services/planets.services";
-import PlanetInterface from "../types/interfaces/planets.interface";
+import PlanetsService from "../services/planets.services.js";
+import PlanetInterface from "../types/interfaces/planets.interface.js";
 
 export default class PlanetsController {
 	static createPlanet = async (
@@ -21,6 +21,7 @@ export default class PlanetsController {
 				for (const planet of planets) {
 					const land: PlanetInterface = {
 						name: planet.name,
+						category: "planets",
 						features: {
 							rotation_period: planet.rotation_period,
 							orbital_period: planet.orbital_period,

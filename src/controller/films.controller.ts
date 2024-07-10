@@ -1,8 +1,8 @@
 import express from "express";
 import axios, { AxiosResponse } from "axios";
 
-import FilmsService from "../services/films.services";
-import FilmInterface from "../types/interfaces/films.interface";
+import FilmsService from "../services/films.services.js";
+import FilmInterface from "../types/interfaces/films.interface.js";
 
 export default class FilmsController {
 	static createFilms = async (
@@ -21,6 +21,7 @@ export default class FilmsController {
 				const films = response.data.results;
 				for (const film of films) {
 					const movie: FilmInterface = {
+						category: "films",
 						name: film.title,
 						episode: film.episode_id,
 						features: {

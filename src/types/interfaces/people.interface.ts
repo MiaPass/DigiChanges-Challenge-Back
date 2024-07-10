@@ -11,6 +11,7 @@ interface PersonFeature {
 export default interface PersonInterface {
 	_id?: any;
 	name: string;
+	category: string;
 	features: PersonFeature;
 	planet: string;
 	films: string[];

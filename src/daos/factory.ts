@@ -1,6 +1,6 @@
-import config from "../config/config";
+import config from "../config/config.js";
 
-import StarWars from "../types/interfaces/sw.interface";
+import StarWars from "../types/interfaces/sw.interface.js";
 
 let filmsDao: StarWars;
 let peopleDao: StarWars;
@@ -11,13 +11,15 @@ const { persistence } = config.server;
 
 switch (persistence) {
 	case "MONGO":
-		const FilmsManagerMongo = await import("./mongo/managers/films.manager");
-		const PeopleManagerMongo = await import("./mongo/managers/people.manager");
+		const FilmsManagerMongo = await import("./mongo/managers/films.manager.js");
+		const PeopleManagerMongo = await import(
+			"./mongo/managers/people.manager.js"
+		);
 		const PlanetsManagerMongo = await import(
-			"./mongo/managers/planets.manager"
+			"./mongo/managers/planets.manager.js"
 		);
 		const StarshipsManagerMongo = await import(
-			"./mongo/managers/starships.manager"
+			"./mongo/managers/starships.manager.js"
 		);
 
 		filmsDao = new FilmsManagerMongo.default();

@@ -12,6 +12,7 @@ interface PlanetFeature {
 export default interface PlanetInterface {
 	_id?: any;
 	name: string;
+	category: string;
 	features: PlanetFeature;
 	films: string[];
 	url: string;

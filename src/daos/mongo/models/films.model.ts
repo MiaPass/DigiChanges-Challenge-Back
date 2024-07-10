@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-import FilmInterface from "../../../types/interfaces/films.interface";
+import FilmInterface from "../../../types/interfaces/films.interface.js";
 
 const filmsCollection: string = "films";
 
@@ -12,6 +12,7 @@ const filmsSchema: Schema<FilmInterface> = new mongoose.Schema({
 		unique: true,
 	},
 	episode: { type: Number, required: true },
+	category: { type: String, required: true },
 	features: {
 		type: {
 			director: {

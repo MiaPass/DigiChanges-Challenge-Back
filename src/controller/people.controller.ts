@@ -1,8 +1,8 @@
 import express from "express";
 import axios, { AxiosResponse } from "axios";
 
-import PeopleService from "../services/people.services";
-import PersonInterface from "../types/interfaces/people.interface";
+import PeopleService from "../services/people.services.js";
+import PersonInterface from "../types/interfaces/people.interface.js";
 
 export default class PeopleController {
 	static createPeople = async (
@@ -21,6 +21,7 @@ export default class PeopleController {
 				for (const person of people) {
 					const character: PersonInterface = {
 						name: person.name,
+						category: "people",
 						features: {
 							height: person.height,
 							mass: person.mass,

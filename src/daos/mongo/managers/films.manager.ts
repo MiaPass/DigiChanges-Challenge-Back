@@ -1,6 +1,6 @@
-import StarWars from "../../../types/interfaces/sw.interface";
-import filmsModel from "../models/films.model";
-import CustomError from "../../../utils/customError";
+import StarWars from "../../../types/interfaces/sw.interface.js";
+import filmsModel from "../models/films.model.js";
+import CustomError from "../../../utils/customError.js";
 
 export default class FilmsManagerMongo implements StarWars {
 	model: any;

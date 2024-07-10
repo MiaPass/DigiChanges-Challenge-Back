@@ -15,6 +15,7 @@ export default interface StarshipInterface {
 	_id?: string;
 	name: string;
 	starship_model: string;
+	category: string;
 	features: StarshipFeature;
 	pilots: string[];
 	films: string[];

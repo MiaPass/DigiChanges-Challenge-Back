@@ -1,4 +1,4 @@
-import { filmsDao } from "../daos/factory";
+import { filmsDao } from "../daos/factory.js";
 
 export default class FilmsService {
 	static async createFilms(data: object): Promise<object> {

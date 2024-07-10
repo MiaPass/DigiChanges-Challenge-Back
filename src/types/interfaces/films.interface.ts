@@ -8,6 +8,7 @@ export default interface FilmInterface {
 	_id?: any;
 	name: string;
 	episode: number;
+	category: string;
 	features: FilmFeature;
 	characters: string[];
 	planets: string[];

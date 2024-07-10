@@ -1,6 +1,6 @@
-import StarWars from "../../../types/interfaces/sw.interface";
-import peopleModel from "../models/people.model";
-import CustomError from "../../../utils/customError";
+import StarWars from "../../../types/interfaces/sw.interface.js";
+import peopleModel from "../models/people.model.js";
+import CustomError from "../../../utils/customError.js";
 
 export default class PeopleManagerMongo implements StarWars {
 	model: any;

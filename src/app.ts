@@ -1,6 +1,6 @@
-import config from "./config/config";
-import AppServer from "./utils/appServer";
-import MongoDbConnect from "./utils/dbConnect";
+import config from "./config/config.js";
+import AppServer from "./utils/appServer.js";
+import MongoDbConnect from "./utils/dbConnect.js";
 
 const { url }: { url: string } = config.mongo;
 

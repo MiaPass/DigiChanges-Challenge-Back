@@ -1,8 +1,8 @@
 import express from "express";
 import axios, { AxiosResponse } from "axios";
 
-import StarshipsService from "../services/starships.services";
-import StarshipInterface from "../types/interfaces/starships.interface";
+import StarshipsService from "../services/starships.services.js";
+import StarshipInterface from "../types/interfaces/starships.interface.js";
 
 export default class StarshipsController {
 	static createStarships = async (
@@ -22,6 +22,7 @@ export default class StarshipsController {
 				for (const starship of starships) {
 					const ship: StarshipInterface = {
 						name: starship.name,
+						category: "starships",
 						starship_model: starship.model,
 						features: {
 							manufacturer: starship.manufacturer,

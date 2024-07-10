@@ -5,8 +5,9 @@
 	"main": "src/app.ts",
 	"type": "module",
 	"scripts": {
-		"build": "tsc",
-		"dev": "tsx src/app.ts",
+		"build": "tsc && tsc-alias",
+		"dev": "nodemon dist/src/app.js",
+		"vercel-build": "tsc && tsc-alias && nodemon dist/src/app.js",
 		"test": "mocha -w --loader=ts-node/esm 'tests/**/*.test.*' --timeout 10000"
 	},
 	"author": "",
@@ -36,6 +37,7 @@
 		"mocha": "^10.6.0",
 		"nodemon": "^3.1.4",
 		"ts-node": "^10.9.2",
+		"tsc-alias": "^1.8.10",
 		"tsconfig-paths": "^4.2.0",
 		"tsx": "^4.16.2"
 	}

@@ -1,4 +1,4 @@
-import { planetsDao } from "../daos/factory";
+import { planetsDao } from "../daos/factory.js";
 
 export default class PlanetsService {
 	static async createPlanets(data: object): Promise<object> {

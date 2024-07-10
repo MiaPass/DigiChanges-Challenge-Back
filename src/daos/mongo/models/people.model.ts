@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-import PersonInterface from "../../../types/interfaces/people.interface";
+import PersonInterface from "../../../types/interfaces/people.interface.js";
 
 const peopleCollection: string = "people";
 
@@ -11,6 +11,7 @@ const peopleSchema: Schema<PersonInterface> = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	category: { type: String, required: true },
 	features: {
 		type: {
 			height: { type: String },

@@ -1,6 +1,6 @@
-import StarWars from "../../../types/interfaces/sw.interface";
-import starshipsModel from "../models/starships.model";
-import CustomError from "../../../utils/customError";
+import StarWars from "../../../types/interfaces/sw.interface.js";
+import starshipsModel from "../models/starships.model.js";
+import CustomError from "../../../utils/customError.js";
 
 export default class StarshipsManagerMongo implements StarWars {
 	model: any;

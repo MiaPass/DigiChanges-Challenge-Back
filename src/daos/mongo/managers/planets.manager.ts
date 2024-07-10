@@ -1,6 +1,6 @@
-import StarWars from "../../../types/interfaces/sw.interface";
-import planetModel from "../models/planets.model";
-import CustomError from "../../../utils/customError";
+import StarWars from "../../../types/interfaces/sw.interface.js";
+import planetModel from "../models/planets.model.js";
+import CustomError from "../../../utils/customError.js";
 
 export default class PlanetManagerMongo implements StarWars {
 	model: any;

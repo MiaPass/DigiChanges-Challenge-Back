@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
-import StarshipInterface from "../../../types/interfaces/starships.interface";
+import StarshipInterface from "../../../types/interfaces/starships.interface.js";
 
 const starshipsCollection: string = "starships";
 
@@ -16,6 +16,7 @@ const starshipsSchema: Schema<StarshipInterface> = new mongoose.Schema({
 		required: true,
 		unique: true,
 	},
+	category: { type: String, required: true },
 	features: {
 		type: {
 			manufacturer: { type: String },

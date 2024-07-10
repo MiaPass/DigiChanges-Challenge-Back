@@ -1,4 +1,4 @@
-import { peopleDao } from "../daos/factory";
+import { peopleDao } from "../daos/factory.js";
 
 export default class PeopleService {
 	static async createPeople(data: object): Promise<object> {
