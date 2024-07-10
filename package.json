@@ -1,11 +1,11 @@
 {
 	"name": "challenge-digichanges",
 	"version": "1.0.0",
-	"main": "dist/src/app.js",
+	"main": "src/app.ts",
 	"type": "module",
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"start": "tsc && tsc-alias && node dist/src/app.js"
+		"start": "tsc && tsc-alias && tsx src/app.ts"
 	},
 	"license": "ISC",
 	"dependencies": {
