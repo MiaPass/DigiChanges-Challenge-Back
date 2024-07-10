@@ -7,7 +7,7 @@
 	"scripts": {
 		"build": "tsc && tsc-alias",
 		"dev": "nodemon dist/src/app.js",
-
+		"vercel-build": "tsc && tsc-alias",
 		"test": "mocha -w --loader=ts-node/esm 'tests/**/*.test.*' --timeout 10000"
 	},
 	"author": "",
