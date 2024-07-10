@@ -1,15 +1,13 @@
 {
 	"name": "challenge-digichanges-",
 	"version": "1.0.0",
-	"description": "",
-	"main": "src/app.ts",
+	"main": "dist/src/app.js",
 	"type": "module",
 	"scripts": {
 		"build": "tsc && tsc-alias",
 		"dev": "nodemon dist/src/app.js",
 		"vercel-build": "tsc && tsc-alias && node dist/src/app.js"
 	},
-	"author": "",
 	"license": "ISC",
 	"dependencies": {
 		"@types/cookie-parser": "^1.4.7",
