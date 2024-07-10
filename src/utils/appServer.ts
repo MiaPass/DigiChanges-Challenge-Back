@@ -28,6 +28,25 @@ class AppServer {
 		this.app.use(express.urlencoded({ extended: true }));
 		this.app.use(cors());
 		this.app.use(cookieParser());
+		this.app.use(
+			(
+				req: express.Request,
+				res: express.Response,
+				next: express.NextFunction
+			) => {
+				res.header("Access-Control-Allow-Origin", "*");
+				res.header("Access-Control-Allow-Credentials", "true");
+				res.header(
+					"Access-Control-Allow-Headers",
+					"Origin, X-Requested-With, Content-Type, Accept"
+				);
+				res.header(
+					"Access-Control-Allow-Methods",
+					"GET, POST, OPTIONS, PUT, DELETE"
+				);
+				next();
+			}
+		);
 	}
 
 	build(): void {
@@ -41,10 +60,6 @@ class AppServer {
 		);
 	}
 
-	callBack() {
-		return this.app;
-	}
-
 	listen(): void {
 		url
 			? (this.server = this.app.listen(url, () => {
@@ -53,6 +68,11 @@ class AppServer {
 			: (this.server = this.app.listen(port, () => {
 					console.log(`Server running on http://localhost:${port}`);
 			  }));
+	}
+
+	// Add this method to get the Express app
+	callBack(): express.Application {
+		return this.app;
 	}
 }
 
