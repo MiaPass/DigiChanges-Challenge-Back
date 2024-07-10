@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc && tsc-alias",
-		"start": "node dist/src/app.js"
+		"start": "tsc && tsc-alias && node dist/src/app.js"
 	},
 	"license": "ISC",
 	"dependencies": {
