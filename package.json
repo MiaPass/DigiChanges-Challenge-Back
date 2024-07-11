@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"main": "dist/src/app.js",
 	"type": "module",
-	"description": "to run tests add script test: npx tsx --test tests/planets.test.ts",
+	"description": "to run tests add script test: npx tsx --test tests/planets.test.ts and discomment the test file. It runs fine in local but doesn't work on the deploy and I run out of time so i commented it",
 	"scripts": {
 		"build": "tsc ",
 		"start": "tsc && tsc-alias && node dist/src/app.js"
