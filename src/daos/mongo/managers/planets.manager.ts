@@ -103,19 +103,6 @@ export default class PlanetManagerMongo implements StarWars {
 		}
 	}
 
-	async update(id: string, data: object): Promise<object> {
-		const planet = await this.model.findByIdAndUpdate({ _id: id }, data);
-		if (planet) {
-			return { status: 200, data: planet };
-		} else {
-			throw new CustomError(
-				500,
-				1,
-				"An unknown error ocurred while updating the planet"
-			);
-		}
-	}
-
 	async delete(): Promise<object> {
 		const deletedPlanets = await planetModel.deleteMany();
 		if (deletedPlanets) {

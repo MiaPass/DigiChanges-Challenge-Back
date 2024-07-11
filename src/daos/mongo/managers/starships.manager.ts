@@ -150,19 +150,6 @@ export default class StarshipsManagerMongo implements StarWars {
 		}
 	}
 
-	async update(id: string, data: object): Promise<object> {
-		const starship = await this.model.findByIdAndUpdate({ _id: id }, data);
-		if (starship) {
-			return { status: 200, data: starship };
-		} else {
-			throw new CustomError(
-				404,
-				1,
-				"An unknown error ocurred while updating the starship"
-			);
-		}
-	}
-
 	async delete(): Promise<object> {
 		const deletedStarship = await starshipsModel.deleteMany();
 		if (deletedStarship) {

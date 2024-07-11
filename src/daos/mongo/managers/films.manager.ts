@@ -149,19 +149,6 @@ export default class FilmsManagerMongo implements StarWars {
 		}
 	}
 
-	async update(id: string, data: object): Promise<object> {
-		const film = await this.model.findByIdAndUpdate({ _id: id }, data);
-		if (film) {
-			return { status: 200, data: film };
-		} else {
-			throw new CustomError(
-				500,
-				1,
-				"An unknown error ocurred while updating the film"
-			);
-		}
-	}
-
 	async delete(): Promise<object> {
 		const deletedFilms = await filmsModel.deleteMany();
 		if (deletedFilms) {

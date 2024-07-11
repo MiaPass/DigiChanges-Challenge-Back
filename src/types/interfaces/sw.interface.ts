@@ -3,6 +3,5 @@ export default interface StarWars {
 	getAll(): object;
 	getById(id: string): object;
 	getFiltered(data: object): object;
-	update(id: string, data: object): object;
 	delete(): object;
 }

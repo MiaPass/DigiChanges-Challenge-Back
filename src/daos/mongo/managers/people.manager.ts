@@ -148,19 +148,6 @@ export default class PeopleManagerMongo implements StarWars {
 		}
 	}
 
-	async update(id: string, data: object): Promise<object> {
-		const character = await this.model.findByIdAndUpdate({ _id: id }, data);
-		if (character) {
-			return { status: 200, data: character };
-		} else {
-			throw new CustomError(
-				500,
-				1,
-				"An unknown error ocurred while updating the character"
-			);
-		}
-	}
-
 	async delete(): Promise<object> {
 		const deletedPeople = await peopleModel.deleteMany();
 		if (deletedPeople) {
