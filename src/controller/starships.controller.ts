@@ -15,7 +15,7 @@ export default class StarshipsController {
 		next: express.NextFunction
 	): Promise<void> => {
 		try {
-			const { id, data } = req.body;
+			const { id, data, paginate } = req.body;
 
 			if (id && !data) {
 				const starship = (await StarshipsService.getStarshipById(id)) as {
@@ -24,12 +24,13 @@ export default class StarshipsController {
 				res.status(200).json(starship.data);
 			} else if (data && !id) {
 				const starshipsFiltered = (await StarshipsService.getStarshipsFiltered(
+					paginate,
 					data
-				)) as { status: number; data: any[] };
+				)) as { pagination: any; data: any[] };
 				res.status(200).json(starshipsFiltered.data);
 			} else if (!id && !data) {
-				let starships = (await StarshipsService.getStarships()) as {
-					status: number;
+				let starships = (await StarshipsService.getStarships(paginate)) as {
+					pagination: any;
 					data: any;
 				};
 				res.status(200).json(starships.data);

@@ -41,16 +41,19 @@ export default class PlanetsService {
 		}
 	}
 
-	static async getPlanets(): Promise<object> {
-		return planetsDao.getAll();
+	static async getPlanets(paginate): Promise<object> {
+		return planetsDao.getAll(paginate);
 	}
 
 	static async getPlanetById(id: string): Promise<object> {
 		return planetsDao.getById(id);
 	}
 
-	static async getPlanetsFiltered(data: { query: string }): Promise<object> {
-		return planetsDao.getFiltered(data);
+	static async getPlanetsFiltered(
+		paginate,
+		data: { query: string }
+	): Promise<object> {
+		return planetsDao.getFiltered(paginate, data);
 	}
 
 	static async deletePlanets(next): Promise<object> {

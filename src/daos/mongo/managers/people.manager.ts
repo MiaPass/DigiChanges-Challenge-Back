@@ -17,7 +17,9 @@ export default class PeopleManagerMongo implements StarWars {
 		}
 	}
 
-	async getAll(): Promise<object> {
+	async getAll(paginate: { page: number }): Promise<object> {
+		const { page } = paginate;
+		const limit = 10;
 		const people = await this.model
 			.find()
 			.populate({
@@ -37,12 +39,22 @@ export default class PeopleManagerMongo implements StarWars {
 				model: "starships",
 				select: "name",
 				foreignField: "url",
-			})
-			.limit(15);
+			});
+
+		const total = await this.model.countDocuments();
 		if (people.length > 0) {
-			return { status: 200, data: people };
-		} else if (people.length === 0 || people.length < 0) {
-			return { status: 404, data: [] };
+			return {
+				status: 200,
+				data: people,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
+		} else if ((people.length = 0)) {
+			return { status: 404, data: [], pagination: null };
 		} else {
 			throw new CustomError(
 				500,
@@ -73,6 +85,7 @@ export default class PeopleManagerMongo implements StarWars {
 				select: "name",
 				foreignField: "url",
 			});
+
 		if (character) {
 			return { status: 200, data: character };
 		} else {
@@ -84,11 +97,15 @@ export default class PeopleManagerMongo implements StarWars {
 		}
 	}
 
-	async getFiltered(data: {
-		limit: number;
-		queries: { field: string; value: string }[];
-	}): Promise<object> {
-		const { limit = 7, queries } = data;
+	async getFiltered(
+		paginate: { page: number },
+		data: {
+			queries: { field: string; value: string }[];
+		}
+	): Promise<object> {
+		const { page } = paginate;
+		const { queries } = data;
+		const limit = 10;
 		const matchStage = {
 			$match: {
 				$and: queries.map((query) => ({
@@ -131,12 +148,19 @@ export default class PeopleManagerMongo implements StarWars {
 					as: "filmsDetails",
 				},
 			},
-			{
-				$limit: limit,
-			},
 		]);
+		const total = await this.model.countDocuments();
 		if (people.length > 0) {
-			return { status: 200, data: people };
+			return {
+				status: 200,
+				data: people,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
 		} else if (people.length === 0 || people.length < 0) {
 			return { status: 404, data: [] };
 		} else {

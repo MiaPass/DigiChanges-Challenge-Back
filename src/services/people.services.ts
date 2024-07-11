@@ -42,16 +42,19 @@ export default class PeopleService {
 		}
 	}
 
-	static async getPeople(): Promise<object> {
-		return peopleDao.getAll();
+	static async getPeople(paginate): Promise<object> {
+		return peopleDao.getAll(paginate);
 	}
 
 	static async getPeopleById(id: string): Promise<object> {
 		return peopleDao.getById(id);
 	}
 
-	static async getPeopleFiltered(data: { query: string }): Promise<object> {
-		return peopleDao.getFiltered(data);
+	static async getPeopleFiltered(
+		paginate,
+		data: { query: string }
+	): Promise<object> {
+		return peopleDao.getFiltered(paginate, data);
 	}
 
 	static async deletePeople(next): Promise<void> {

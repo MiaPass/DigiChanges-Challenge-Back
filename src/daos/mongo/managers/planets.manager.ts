@@ -17,18 +17,28 @@ export default class PlanetManagerMongo implements StarWars {
 		}
 	}
 
-	async getAll(): Promise<object> {
-		const planets = await this.model
-			.find()
-			.populate({
-				path: "films",
-				model: "films",
-				select: "name _id",
-				foreignField: "url",
-			})
-			.limit(15);
+	async getAll(paginate: { page: number }): Promise<object> {
+		const { page } = paginate;
+		const limit = 10;
+		const planets = await this.model.find().populate({
+			path: "films",
+			model: "films",
+			select: "name _id",
+			foreignField: "url",
+		});
+
+		const total = await this.model.countDocuments();
 		if (planets.length > 0) {
-			return { status: 200, data: planets };
+			return {
+				status: 200,
+				data: planets,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
 		} else if (planets.length === 0 || planets.length < 0) {
 			return { status: 404, data: [] };
 		} else {
@@ -58,11 +68,16 @@ export default class PlanetManagerMongo implements StarWars {
 		}
 	}
 
-	async getFiltered(data: {
-		limit: number;
-		queries: { field: string; value: string }[];
-	}): Promise<object> {
-		const { limit = 7, queries } = data;
+	async getFiltered(
+		paginate: { page: number },
+		data: {
+			limit: number;
+			queries: { field: string; value: string }[];
+		}
+	): Promise<object> {
+		const { page } = paginate;
+		const { queries } = data;
+		const limit = 10;
 		const matchStage = {
 			$match: {
 				$and: queries.map((query) => ({
@@ -71,7 +86,6 @@ export default class PlanetManagerMongo implements StarWars {
 			},
 		};
 
-		// const planets = await this.model.find(filters, limit);
 		const planets = await this.model.aggregate([
 			matchStage,
 			{
@@ -85,13 +99,19 @@ export default class PlanetManagerMongo implements StarWars {
 					as: "filmDetails",
 				},
 			},
-			{
-				$limit: limit,
-			},
 		]);
-
+		const total = await this.model.countDocuments();
 		if (planets.length > 0) {
-			return { status: 200, data: planets };
+			return {
+				status: 200,
+				data: planets,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
 		} else if (planets.length === 0 || planets.length < 0) {
 			return { status: 404, data: [] };
 		} else {

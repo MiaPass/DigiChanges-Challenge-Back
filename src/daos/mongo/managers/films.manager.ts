@@ -17,7 +17,9 @@ export default class FilmsManagerMongo implements StarWars {
 		}
 	}
 
-	async getAll(): Promise<object> {
+	async getAll(paginate: { page: number }): Promise<object> {
+		const { page } = paginate;
+		const limit = 10;
 		const films = await this.model
 			.find()
 			.populate({
@@ -37,10 +39,19 @@ export default class FilmsManagerMongo implements StarWars {
 				model: "starships",
 				select: "name",
 				foreignField: "url",
-			})
-			.limit(6);
+			});
+		const total = await this.model.countDocuments();
 		if (films.length > 0) {
-			return { status: 200, data: films };
+			return {
+				status: 200,
+				data: films,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
 		} else if (films.length === 0 || films.length < 0) {
 			return { status: 404, data: [] };
 		} else {
@@ -84,11 +95,15 @@ export default class FilmsManagerMongo implements StarWars {
 		}
 	}
 
-	async getFiltered(data: {
-		limit: number;
-		queries: { field: string; value: string }[];
-	}): Promise<object> {
-		const { limit = 7, queries } = data;
+	async getFiltered(
+		paginate: { page: number },
+		data: {
+			queries: { field: string; value: string }[];
+		}
+	): Promise<object> {
+		const { page } = paginate;
+		const { queries } = data;
+		const limit = 10;
 		const matchStage = {
 			$match: {
 				$and: queries.map((query) => ({
@@ -96,7 +111,7 @@ export default class FilmsManagerMongo implements StarWars {
 				})),
 			},
 		};
-		const film = await this.model.aggregate([
+		const films = await this.model.aggregate([
 			matchStage,
 			{
 				$lookup: {
@@ -131,14 +146,21 @@ export default class FilmsManagerMongo implements StarWars {
 					as: "peopleDetails",
 				},
 			},
-			{
-				$limit: limit,
-			},
 		]);
 
-		if (film.length > 0) {
-			return { status: 200, data: film };
-		} else if (film.length === 0 || film.length < 0) {
+		const total = await this.model.countDocuments();
+		if (films.length > 0) {
+			return {
+				status: 200,
+				data: films,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
+		} else if (films.length === 0 || films.length < 0) {
 			return { status: 404, data: [] };
 		} else {
 			throw new CustomError(

@@ -17,25 +17,57 @@ export default class StarshipsManagerMongo implements StarWars {
 		}
 	}
 
-	async getAll(): Promise<object> {
-		const starships = await this.model
-			.find()
-			.populate({
-				path: "pilots",
-				model: "people",
-				select: "name _id",
-				foreignField: "url",
-			})
-			.populate({
-				path: "films",
-				model: "films",
-				select: "name _id",
-				foreignField: "url",
-			})
-			.limit(15);
+	async getAll(paginate: { page: number }): Promise<object> {
+		const { page } = paginate;
+
+		const limit = 10;
+		const skip = (page - 1) * limit;
+
+		const [starships, total] = await Promise.all([
+			this.model
+				.find()
+				.skip(skip)
+				.limit(limit)
+				.lean()
+				.populate({
+					path: "pilots",
+					model: "people",
+					select: "name",
+					foreignField: "url",
+				})
+				.populate({
+					path: "films",
+					model: "films",
+					select: "name",
+					foreignField: "url",
+				}),
+			this.model.countDocuments(),
+		]);
+
 		if (starships.length > 0) {
-			return { status: 200, data: starships };
-		} else if (starships.length === 0 || starships.length < 0) {
+			const transformedStarships = starships.map((starship) => ({
+				...starship,
+				pilots: starship.pilots.map((pilot) => ({
+					_id: pilot._id,
+					name: pilot.name,
+				})),
+				films: starship.films.map((film) => ({
+					_id: film._id,
+					name: film.name,
+				})),
+			}));
+
+			return {
+				status: 200,
+				data: transformedStarships,
+				pagination: {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				},
+			};
+		} else if (starships.length === 0) {
 			return { status: 404, data: [] };
 		} else {
 			throw new CustomError(
@@ -72,80 +104,75 @@ export default class StarshipsManagerMongo implements StarWars {
 		}
 	}
 
-	async getFiltered(data: {
-		limit: number;
-		queries: { field: string; value: string }[];
-	}): Promise<object> {
-		const { limit = 7, queries } = data;
-		const matchStage = {
-			$match: {
-				$and: queries.map((query) => ({
-					[query.field]: { $regex: query.value, $options: "i" },
-				})),
-			},
-		};
+	async getFiltered(
+		paginate: { page: number },
+		data: {
+			queries: { field: string; value: string }[];
+		}
+	): Promise<object> {
+		const { page } = paginate;
+		const { queries } = data;
+		const limit = 10;
+		const skip = (page - 1) * limit;
 
-		const starship = await this.model.aggregate([
-			matchStage,
-			{
-				$lookup: {
-					from: "people",
-					localField: "pilots",
-					foreignField: "url",
-					as: "pilots",
-				},
-			},
-			{
-				$lookup: {
-					from: "films",
-					localField: "films",
-					foreignField: "url",
-					as: "films",
-				},
-			},
-			{
-				$project: {
-					_id: 1,
-					name: 1,
-					starship_model: 1,
-					features: 1,
-					url: 1,
-					pilots: {
-						$map: {
-							input: "$pilots",
-							as: "pilot",
-							in: {
-								_id: "$$pilot._id",
-								name: "$$pilot.name",
-							},
-						},
-					},
-					films: {
-						$map: {
-							input: "$films",
-							as: "film",
-							in: {
-								_id: "$$film._id",
-								name: "$$film.name",
-							},
-						},
-					},
-				},
-			},
-			{
-				$limit: limit,
-			},
-		]);
+		const filter = queries.reduce((acc, query) => {
+			acc[query.field] = { $regex: query.value, $options: "i" };
+			return acc;
+		}, {});
 
-		if (starship.length > 0) {
-			return { status: 200, data: starship };
-		} else if (starship.length === 0 || starship.length < 0) {
-			return { status: 404, data: [] };
-		} else {
+		try {
+			const [starships, total] = await Promise.all([
+				this.model
+					.find(filter)
+					.skip(skip)
+					.limit(limit)
+					.lean()
+					.populate({
+						path: "pilots",
+						model: "people",
+						select: "name",
+						foreignField: "url",
+					})
+					.populate({
+						path: "films",
+						model: "films",
+						select: "name",
+						foreignField: "url",
+					}),
+				this.model.countDocuments(filter),
+			]);
+
+			if (starships.length > 0) {
+				const transformedStarships = starships.map((starship) => ({
+					...starship,
+					pilots: starship.pilots.map((pilot) => ({
+						_id: pilot._id,
+						name: pilot.name,
+					})),
+					films: starship.films.map((film) => ({
+						_id: film._id,
+						name: film.name,
+					})),
+				}));
+
+				return {
+					status: 200,
+					data: transformedStarships,
+					pagination: {
+						currentPage: page,
+						totalPages: Math.ceil(total / limit),
+						totalItems: total,
+						itemsPerPage: limit,
+					},
+				};
+			} else {
+				return { status: 404, data: [] };
+			}
+		} catch (error) {
 			throw new CustomError(
 				500,
 				1,
-				"An unknown error ocurred getting the starship"
+				"An unknown error occurred getting the starships"
 			);
 		}
 	}

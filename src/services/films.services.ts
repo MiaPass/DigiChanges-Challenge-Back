@@ -39,16 +39,19 @@ export default class FilmsService {
 		}
 	}
 
-	static async getFilms(): Promise<object> {
-		return filmsDao.getAll();
+	static async getFilms(paginate): Promise<object> {
+		return filmsDao.getAll(paginate);
 	}
 
 	static async getFilmById(id: string): Promise<object> {
 		return filmsDao.getById(id);
 	}
 
-	static async getFilmsFiltered(data: { query: string }): Promise<object> {
-		return filmsDao.getFiltered(data);
+	static async getFilmsFiltered(
+		paginate,
+		data: { query: string }
+	): Promise<object> {
+		return filmsDao.getFiltered(paginate, data);
 	}
 
 	static async deleteFilms(next): Promise<void> {

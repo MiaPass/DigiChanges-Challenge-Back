@@ -10,7 +10,7 @@ export default class PlanetsController {
 	): Promise<void> {
 		try {
 			let result: any = null;
-			const { id, data } = req.body;
+			const { id, data, paginate } = req.body;
 			if (id && !data) {
 				const planet = (await PlanetsService.getPlanetById(id)) as {
 					data: any;
@@ -18,13 +18,15 @@ export default class PlanetsController {
 				res.status(200).json(planet.data);
 			} else if (data && !id) {
 				const planetsFiltered = (await PlanetsService.getPlanetsFiltered(
+					paginate,
 					data
-				)) as {
-					data: any;
-				};
+				)) as { pagination: any; data: any };
 				res.status(200).json(planetsFiltered.data);
 			} else if (!id && !data) {
-				const planets = (await PlanetsService.getPlanets()) as { data: any };
+				const planets = (await PlanetsService.getPlanets(paginate)) as {
+					pagination: any;
+					data: any;
+				};
 				res.status(200).json(planets.data);
 			} else {
 				res.status(500).json({ message: "Wrong body request" });

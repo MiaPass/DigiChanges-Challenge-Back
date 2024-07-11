@@ -47,16 +47,19 @@ export default class StarshipsService {
 		}
 	}
 
-	static async getStarships(): Promise<object> {
-		return starshipsDao.getAll();
+	static async getStarships(paginate): Promise<object> {
+		return starshipsDao.getAll(paginate);
 	}
 
 	static async getStarshipById(id: string): Promise<object> {
 		return starshipsDao.getById(id);
 	}
 
-	static async getStarshipsFiltered(data: { query: string }): Promise<object> {
-		return starshipsDao.getFiltered(data);
+	static async getStarshipsFiltered(
+		paginate,
+		data: { query: string }
+	): Promise<object> {
+		return starshipsDao.getFiltered(paginate, data);
 	}
 
 	static async deleteStarships(next): Promise<void> {

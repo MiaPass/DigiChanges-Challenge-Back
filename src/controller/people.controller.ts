@@ -9,20 +9,22 @@ export default class PeopleController {
 		next: express.NextFunction
 	): Promise<void> {
 		try {
-			const { id, data } = req.body;
+			const { id, data, paginate } = req.body;
 
 			if (id && !data) {
 				const person = (await PeopleService.getPeopleById(id)) as { data: any };
 				res.status(200).json(person.data);
 			} else if (data && !id) {
 				const peopleFiltered = (await PeopleService.getPeopleFiltered(
+					paginate,
 					data
-				)) as {
-					data: any;
-				};
+				)) as { pagination: any; data: any };
 				res.status(200).json(peopleFiltered.data);
 			} else if (!id && !data) {
-				const people = (await PeopleService.getPeople()) as { data: any };
+				const people = (await PeopleService.getPeople(paginate)) as {
+					data: any;
+					pagination: any;
+				};
 
 				res.status(200).json(people.data);
 			} else {
