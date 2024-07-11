@@ -24,13 +24,13 @@ const starships = async () => {
 	await StarshipsService.createStarships(next);
 };
 
-function weeklyTask() {
+async function weeklyTask() {
 	const now = new Date();
 	console.log(`Weekly task executed at: ${now.toISOString()}`);
-	films();
-	people();
-	planets();
-	starships();
+	await films();
+	await people();
+	await planets();
+	await starships();
 }
 
 export default weeklyTask;
