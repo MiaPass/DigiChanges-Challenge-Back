@@ -9,7 +9,10 @@ export default class FilmsController {
 		next: express.NextFunction
 	): Promise<void> {
 		try {
-			const { id, data, paginate } = req.body;
+			const { page } = req.query;
+			const { id, data } = req.body;
+
+			let paginate = { page: page };
 
 			if (id && !data) {
 				const film = (await FilmsService.getFilmById(id)) as {

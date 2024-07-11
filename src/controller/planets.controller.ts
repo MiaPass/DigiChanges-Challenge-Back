@@ -9,8 +9,10 @@ export default class PlanetsController {
 		next: express.NextFunction
 	): Promise<void> {
 		try {
-			let result: any = null;
-			const { id, data, paginate } = req.body;
+			const { page } = req.query;
+			const { id, data } = req.body;
+
+			let paginate = { page: page };
 			if (id && !data) {
 				const planet = (await PlanetsService.getPlanetById(id)) as {
 					data: any;
