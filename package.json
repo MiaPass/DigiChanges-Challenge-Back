@@ -3,10 +3,10 @@
 	"version": "1.0.0",
 	"main": "dist/src/app.js",
 	"type": "module",
+	"description": "to run tests add script test: npx tsx --test tests/planets.test.ts",
 	"scripts": {
 		"build": "tsc ",
-		"start": "tsc && tsc-alias && node dist/src/app.js",
-		"test": "npx tsx --test tests/planets.test.ts "
+		"start": "tsc && tsc-alias && node dist/src/app.js"
 	},
 	"author": "Ianina Mia Passalia",
 	"license": "ISC",
