@@ -20,12 +20,18 @@ export default class PlanetManagerMongo implements StarWars {
 	async getAll(paginate: { page: number }): Promise<object> {
 		const { page } = paginate;
 		const limit = 10;
-		const planets = await this.model.find().populate({
-			path: "films",
-			model: "films",
-			select: "name _id",
-			foreignField: "url",
-		});
+		const skip = (page - 1) * limit;
+		const planets = await this.model
+			.find()
+			.skip(skip)
+			.limit(limit)
+			.lean()
+			.populate({
+				path: "films",
+				model: "films",
+				select: "name _id",
+				foreignField: "url",
+			});
 
 		const total = await this.model.countDocuments();
 		if (planets.length > 0) {

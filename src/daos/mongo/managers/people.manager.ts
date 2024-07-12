@@ -20,8 +20,12 @@ export default class PeopleManagerMongo implements StarWars {
 	async getAll(paginate: { page: number }): Promise<object> {
 		const { page } = paginate;
 		const limit = 10;
+		const skip = (page - 1) * limit;
 		const people = await this.model
 			.find()
+			.skip(skip)
+			.limit(limit)
+			.lean()
 			.populate({
 				path: "planet",
 				model: "planets",
