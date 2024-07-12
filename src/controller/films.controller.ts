@@ -10,7 +10,8 @@ export default class FilmsController {
 	): Promise<void> {
 		try {
 			const { page } = req.query;
-			const { id, data } = req.body;
+			const { id } = req.params;
+			const { data } = req.body;
 
 			let paginate = { page: page };
 
@@ -25,16 +26,14 @@ export default class FilmsController {
 					data
 				)) as {
 					data: any;
-					pagination: any;
 				};
 
 				res.status(200).json(filmsFiltered.data);
 			} else if (!id && !data) {
 				const films = (await FilmsService.getFilms(paginate)) as {
 					data: any;
-					pagination: any;
 				};
-				res.status(200).json([films.data, films.pagination]);
+				res.status(200).json(films.data);
 			} else {
 				res.status(500).json({ message: "Wrong body request" });
 			}

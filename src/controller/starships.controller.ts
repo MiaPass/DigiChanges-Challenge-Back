@@ -3,12 +3,6 @@ import express from "express";
 import StarshipsService from "../services/starships.services.js";
 
 export default class StarshipsController {
-	static createStarships = async (
-		req: express.Request,
-		res: express.Response,
-		next: express.NextFunction
-	): Promise<void> => {};
-
 	static getStarships = async (
 		req: express.Request,
 		res: express.Response,
@@ -16,7 +10,8 @@ export default class StarshipsController {
 	): Promise<void> => {
 		try {
 			const { page } = req.query;
-			const { id, data } = req.body;
+			const { id } = req.params;
+			const { data } = req.body;
 
 			let paginate = { page: page };
 
@@ -29,11 +24,10 @@ export default class StarshipsController {
 				const starshipsFiltered = (await StarshipsService.getStarshipsFiltered(
 					paginate,
 					data
-				)) as { pagination: any; data: any[] };
+				)) as { data: any[] };
 				res.status(200).json(starshipsFiltered.data);
 			} else if (!id && !data) {
 				let starships = (await StarshipsService.getStarships(paginate)) as {
-					pagination: any;
 					data: any;
 				};
 				res.status(200).json(starships.data);

@@ -57,15 +57,17 @@ export default class StarshipsManagerMongo implements StarWars {
 				})),
 			}));
 
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+
+			transformedStarships.unshift(info);
 			return {
 				status: 200,
 				data: transformedStarships,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (starships.length === 0) {
 			return { status: 404, data: [] };
@@ -155,15 +157,17 @@ export default class StarshipsManagerMongo implements StarWars {
 					})),
 				}));
 
+				const info = {
+					currentPage: page,
+					totalPages: Math.ceil(total / limit),
+					totalItems: total,
+					itemsPerPage: limit,
+				};
+
+				transformedStarships.unshift(info);
 				return {
 					status: 200,
 					data: transformedStarships,
-					pagination: {
-						currentPage: page,
-						totalPages: Math.ceil(total / limit),
-						totalItems: total,
-						itemsPerPage: limit,
-					},
 				};
 			} else {
 				return { status: 404, data: [] };

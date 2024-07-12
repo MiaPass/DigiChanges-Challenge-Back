@@ -10,7 +10,8 @@ export default class PeopleController {
 	): Promise<void> {
 		try {
 			const { page } = req.query;
-			const { id, data } = req.body;
+			const { id } = req.params;
+			const { data } = req.body;
 
 			let paginate = { page: page };
 
@@ -21,12 +22,11 @@ export default class PeopleController {
 				const peopleFiltered = (await PeopleService.getPeopleFiltered(
 					paginate,
 					data
-				)) as { pagination: any; data: any };
+				)) as { data: any };
 				res.status(200).json(peopleFiltered.data);
 			} else if (!id && !data) {
 				const people = (await PeopleService.getPeople(paginate)) as {
 					data: any;
-					pagination: any;
 				};
 
 				res.status(200).json(people.data);

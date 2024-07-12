@@ -10,7 +10,8 @@ export default class PlanetsController {
 	): Promise<void> {
 		try {
 			const { page } = req.query;
-			const { id, data } = req.body;
+			const { id } = req.params;
+			const { data } = req.body;
 
 			let paginate = { page: page };
 			if (id && !data) {
@@ -22,11 +23,10 @@ export default class PlanetsController {
 				const planetsFiltered = (await PlanetsService.getPlanetsFiltered(
 					paginate,
 					data
-				)) as { pagination: any; data: any };
+				)) as { data: any };
 				res.status(200).json(planetsFiltered.data);
 			} else if (!id && !data) {
 				const planets = (await PlanetsService.getPlanets(paginate)) as {
-					pagination: any;
 					data: any;
 				};
 				res.status(200).json(planets.data);

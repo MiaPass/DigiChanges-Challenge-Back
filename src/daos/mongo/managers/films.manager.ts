@@ -41,16 +41,18 @@ export default class FilmsManagerMongo implements StarWars {
 				foreignField: "url",
 			});
 		const total = await this.model.countDocuments();
+
 		if (films.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			films.unshift(info);
 			return {
 				status: 200,
 				data: films,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (films.length === 0 || films.length < 0) {
 			return { status: 404, data: [] };
@@ -147,18 +149,19 @@ export default class FilmsManagerMongo implements StarWars {
 				},
 			},
 		]);
-
 		const total = await this.model.countDocuments();
+
 		if (films.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			films.unshift(info);
 			return {
 				status: 200,
 				data: films,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (films.length === 0 || films.length < 0) {
 			return { status: 404, data: [] };

@@ -29,15 +29,16 @@ export default class PlanetManagerMongo implements StarWars {
 
 		const total = await this.model.countDocuments();
 		if (planets.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			planets.unshift(info);
 			return {
 				status: 200,
 				data: planets,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (planets.length === 0 || planets.length < 0) {
 			return { status: 404, data: [] };
@@ -102,15 +103,16 @@ export default class PlanetManagerMongo implements StarWars {
 		]);
 		const total = await this.model.countDocuments();
 		if (planets.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			planets.unshift(info);
 			return {
 				status: 200,
 				data: planets,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (planets.length === 0 || planets.length < 0) {
 			return { status: 404, data: [] };

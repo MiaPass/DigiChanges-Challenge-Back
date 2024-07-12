@@ -43,15 +43,16 @@ export default class PeopleManagerMongo implements StarWars {
 
 		const total = await this.model.countDocuments();
 		if (people.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			people.unshift(info);
 			return {
 				status: 200,
 				data: people,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if ((people.length = 0)) {
 			return { status: 404, data: [], pagination: null };
@@ -151,15 +152,16 @@ export default class PeopleManagerMongo implements StarWars {
 		]);
 		const total = await this.model.countDocuments();
 		if (people.length > 0) {
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
+			people.unshift(info);
 			return {
 				status: 200,
 				data: people,
-				pagination: {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				},
 			};
 		} else if (people.length === 0 || people.length < 0) {
 			return { status: 404, data: [] };
