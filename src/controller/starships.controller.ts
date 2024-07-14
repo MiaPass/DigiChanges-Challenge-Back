@@ -9,30 +9,33 @@ export default class StarshipsController {
 		next: express.NextFunction
 	): Promise<void> => {
 		try {
-			const { page } = req.query;
+			const { page, field, value } = req.query;
 			const { id } = req.params;
-			const { data } = req.body;
+			const newValue =
+				value !== undefined && typeof value === "string" && value.includes("_")
+					? value.replace(/_/g, " ")
+					: value !== undefined
+					? value
+					: null;
+			let paginate = { page: Number(page) };
 
-			let paginate = { page: page };
-
-			if (id && !data) {
+			if (id && !field && !newValue) {
 				const starship = (await StarshipsService.getStarshipById(id)) as {
 					data: any;
 				};
 				res.status(200).json(starship.data);
-			} else if (data && !id) {
+			} else if (!id && field && newValue) {
 				const starshipsFiltered = (await StarshipsService.getStarshipsFiltered(
 					paginate,
-					data
+					field,
+					newValue
 				)) as { data: any[] };
 				res.status(200).json(starshipsFiltered.data);
-			} else if (!id && !data) {
+			} else if (!id && !field && !newValue) {
 				let starships = (await StarshipsService.getStarships(paginate)) as {
 					data: any;
 				};
 				res.status(200).json(starships.data);
-			} else {
-				res.status(500).json({ message: "Wrong body request" });
 			}
 		} catch (error: unknown) {
 			next(error);

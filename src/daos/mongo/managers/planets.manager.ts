@@ -18,8 +18,9 @@ export default class PlanetManagerMongo implements StarWars {
 	}
 
 	async getAll(paginate: { page: number }): Promise<object> {
-		const { page } = paginate;
-		const limit = 10;
+		let { page } = paginate;
+		const limit = 12;
+		if (!page) page = 1;
 		const skip = (page - 1) * limit;
 		const planets = await this.model
 			.find()
@@ -77,19 +78,22 @@ export default class PlanetManagerMongo implements StarWars {
 
 	async getFiltered(
 		paginate: { page: number },
-		data: {
-			limit: number;
-			queries: { field: string; value: string }[];
-		}
+		field: string,
+		value: string
 	): Promise<object> {
-		const { page } = paginate;
-		const { queries } = data;
-		const limit = 10;
+		let { page } = paginate;
+		if (!page) page = 1;
+		const limit = 12;
+
+		if (field === "terrain") {
+			field = "features.terrain";
+		}
 		const matchStage = {
 			$match: {
-				$and: queries.map((query) => ({
-					[query.field]: { $regex: query.value, $options: "i" },
-				})),
+				$or: [
+					{ [field]: { $regex: value, $options: "i" } },
+					{ [field]: parseFloat(value) },
+				],
 			},
 		};
 
@@ -100,14 +104,26 @@ export default class PlanetManagerMongo implements StarWars {
 					from: "films",
 					let: { films: "$films" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$films"] } } },
-						{ $project: { _id: 1, title: 1 } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$films" },
+										then: { $in: ["$url", "$$films"] },
+										else: { $eq: ["$url", "$$films"] },
+									},
+								},
+							},
+						},
+						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "filmDetails",
+					as: "films",
 				},
 			},
 		]);
-		const total = await this.model.countDocuments();
+
+		const total = await this.model.countDocuments(matchStage.$match);
+
 		if (planets.length > 0) {
 			const info = {
 				currentPage: page,

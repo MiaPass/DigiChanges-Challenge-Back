@@ -55,11 +55,8 @@ export default class StarshipsService {
 		return starshipsDao.getById(id);
 	}
 
-	static async getStarshipsFiltered(
-		paginate,
-		data: { query: string }
-	): Promise<object> {
-		return starshipsDao.getFiltered(paginate, data);
+	static async getStarshipsFiltered(paginate, field, value): Promise<object> {
+		return starshipsDao.getFiltered(paginate, field, value);
 	}
 
 	static async deleteStarships(next): Promise<void> {

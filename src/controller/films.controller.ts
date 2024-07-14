@@ -9,33 +9,37 @@ export default class FilmsController {
 		next: express.NextFunction
 	): Promise<void> {
 		try {
-			const { page } = req.query;
+			const { page, field, value } = req.query;
 			const { id } = req.params;
-			const { data } = req.body;
 
-			let paginate = { page: page };
+			const newValue =
+				value !== undefined && typeof value === "string" && value.includes("_")
+					? value.replace(/_/g, " ")
+					: value !== undefined
+					? value
+					: null;
+			let paginate = { page: Number(page) };
 
-			if (id && !data) {
+			if (id && !field && !newValue) {
 				const film = (await FilmsService.getFilmById(id)) as {
 					data: any;
 				};
 				res.status(200).json(film.data);
-			} else if (data && !id) {
+			} else if (field && newValue && !id) {
 				const filmsFiltered = (await FilmsService.getFilmsFiltered(
 					paginate,
-					data
+					field,
+					newValue
 				)) as {
 					data: any;
 				};
 
 				res.status(200).json(filmsFiltered.data);
-			} else if (!id && !data) {
+			} else if (!id && !field && !newValue) {
 				const films = (await FilmsService.getFilms(paginate)) as {
 					data: any;
 				};
 				res.status(200).json(films.data);
-			} else {
-				res.status(500).json({ message: "Wrong body request" });
 			}
 		} catch (error: unknown) {
 			next(error);

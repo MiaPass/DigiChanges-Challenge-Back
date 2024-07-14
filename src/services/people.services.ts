@@ -50,11 +50,8 @@ export default class PeopleService {
 		return peopleDao.getById(id);
 	}
 
-	static async getPeopleFiltered(
-		paginate,
-		data: { query: string }
-	): Promise<object> {
-		return peopleDao.getFiltered(paginate, data);
+	static async getPeopleFiltered(paginate, field, value): Promise<object> {
+		return peopleDao.getFiltered(paginate, field, value);
 	}
 
 	static async deletePeople(next): Promise<void> {

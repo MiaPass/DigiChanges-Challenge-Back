@@ -18,9 +18,10 @@ export default class StarshipsManagerMongo implements StarWars {
 	}
 
 	async getAll(paginate: { page: number }): Promise<object> {
-		const { page } = paginate;
+		let { page } = paginate;
 
-		const limit = 10;
+		const limit = 12;
+		if (!page) page = 1;
 		const skip = (page - 1) * limit;
 
 		const [starships, total] = await Promise.all([
@@ -108,71 +109,83 @@ export default class StarshipsManagerMongo implements StarWars {
 
 	async getFiltered(
 		paginate: { page: number },
-		data: {
-			queries: { field: string; value: string }[];
-		}
+		field: string,
+		value: string
 	): Promise<object> {
-		const { page } = paginate;
-		const { queries } = data;
-		const limit = 10;
+		let { page } = paginate;
+
+		if (!page) page = 1;
+
+		const limit = 12;
 		const skip = (page - 1) * limit;
 
-		const filter = queries.reduce((acc, query) => {
-			acc[query.field] = { $regex: query.value, $options: "i" };
-			return acc;
-		}, {});
+		let filter: any;
+		if (field.startsWith("features.")) {
+			// For nested fields in features
+			filter = {
+				$or: [
+					{ [field]: { $regex: value, $options: "i" } },
+					{ [field]: parseFloat(value) },
+				],
+			};
+		} else {
+			// For top-level fields
+			filter = {
+				$or: [
+					{ [field]: { $regex: value, $options: "i" } },
+					{ [field]: parseFloat(value) },
+				],
+			};
+		}
 
-		try {
-			const [starships, total] = await Promise.all([
-				this.model
-					.find(filter)
-					.skip(skip)
-					.limit(limit)
-					.lean()
-					.populate({
-						path: "pilots",
-						model: "people",
-						select: "name",
-						foreignField: "url",
-					})
-					.populate({
-						path: "films",
-						model: "films",
-						select: "name",
-						foreignField: "url",
-					}),
-				this.model.countDocuments(filter),
-			]);
+		const [starships, total] = await Promise.all([
+			this.model
+				.find(filter)
+				.skip(skip)
+				.limit(limit)
+				.lean()
+				.populate({
+					path: "pilots",
+					model: "people",
+					select: "name",
+					foreignField: "url",
+				})
+				.populate({
+					path: "films",
+					model: "films",
+					select: "name",
+					foreignField: "url",
+				}),
+			this.model.countDocuments(filter),
+		]);
 
-			if (starships.length > 0) {
-				const transformedStarships = starships.map((starship) => ({
-					...starship,
-					pilots: starship.pilots.map((pilot) => ({
-						_id: pilot._id,
-						name: pilot.name,
-					})),
-					films: starship.films.map((film) => ({
-						_id: film._id,
-						name: film.name,
-					})),
-				}));
+		if (starships.length > 0) {
+			const transformedStarships = starships.map((starship: any) => ({
+				...starship,
+				pilots: starship.pilots.map((pilot: any) => ({
+					_id: pilot._id,
+					name: pilot.name,
+				})),
+				films: starship.films.map((film: any) => ({
+					_id: film._id,
+					name: film.name,
+				})),
+			}));
 
-				const info = {
-					currentPage: page,
-					totalPages: Math.ceil(total / limit),
-					totalItems: total,
-					itemsPerPage: limit,
-				};
+			const info = {
+				currentPage: page,
+				totalPages: Math.ceil(total / limit),
+				totalItems: total,
+				itemsPerPage: limit,
+			};
 
-				transformedStarships.unshift(info);
-				return {
-					status: 200,
-					data: transformedStarships,
-				};
-			} else {
-				return { status: 404, data: [] };
-			}
-		} catch (error) {
+			return {
+				status: 200,
+				data: [info, ...transformedStarships],
+			};
+		} else if (starships.length === 0 || starships.length < 0) {
+			return { status: 404, data: [] };
+		} else {
 			throw new CustomError(
 				500,
 				1,

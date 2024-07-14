@@ -18,8 +18,9 @@ export default class PeopleManagerMongo implements StarWars {
 	}
 
 	async getAll(paginate: { page: number }): Promise<object> {
-		const { page } = paginate;
-		const limit = 10;
+		let { page } = paginate;
+		if (!page) page = 1;
+		const limit = 12;
 		const skip = (page - 1) * limit;
 		const people = await this.model
 			.find()
@@ -104,18 +105,18 @@ export default class PeopleManagerMongo implements StarWars {
 
 	async getFiltered(
 		paginate: { page: number },
-		data: {
-			queries: { field: string; value: string }[];
-		}
+		field: string,
+		value: string
 	): Promise<object> {
-		const { page } = paginate;
-		const { queries } = data;
-		const limit = 10;
+		let { page } = paginate;
+		if (!page) page = 1;
+		const limit = 12;
 		const matchStage = {
 			$match: {
-				$and: queries.map((query) => ({
-					[query.field]: { $regex: query.value, $options: "i" },
-				})),
+				$or: [
+					{ [field]: { $regex: value, $options: "i" } },
+					{ [field]: parseFloat(value) },
+				],
 			},
 		};
 		const people = await this.model.aggregate([
@@ -123,12 +124,22 @@ export default class PeopleManagerMongo implements StarWars {
 			{
 				$lookup: {
 					from: "planets",
-					let: { planet: "$planet" },
+					let: { planets: "$planet" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$planet"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$planets" },
+										then: { $in: ["$url", "$$planets"] },
+										else: { $eq: ["$url", "$$planets"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "planetsDetails",
+					as: "planet",
 				},
 			},
 			{
@@ -136,10 +147,20 @@ export default class PeopleManagerMongo implements StarWars {
 					from: "starships",
 					let: { starships: "$starships" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$starships"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$starships" },
+										then: { $in: ["$url", "$$starships"] },
+										else: { $eq: ["$url", "$$starships"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "starshipsDetails",
+					as: "starships",
 				},
 			},
 			{
@@ -147,14 +168,25 @@ export default class PeopleManagerMongo implements StarWars {
 					from: "films",
 					let: { films: "$films" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$films"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$films" },
+										then: { $in: ["$url", "$$films"] },
+										else: { $eq: ["$url", "$$films"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "filmsDetails",
+					as: "films",
 				},
 			},
 		]);
-		const total = await this.model.countDocuments();
+
+		const total = await this.model.countDocuments(matchStage.$match);
 		if (people.length > 0) {
 			const info = {
 				currentPage: page,

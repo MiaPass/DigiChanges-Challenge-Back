@@ -36,6 +36,7 @@ class AppServer {
 			) => {
 				const status = err.status || 500;
 				const message = err.message || "";
+				console.log(message);
 				res.status(status).send(message);
 			}
 		);

@@ -18,8 +18,9 @@ export default class FilmsManagerMongo implements StarWars {
 	}
 
 	async getAll(paginate: { page: number }): Promise<object> {
-		const { page } = paginate;
-		const limit = 10;
+		let { page } = paginate;
+		const limit = 12;
+		if (!page) page = 1;
 		const skip = (page - 1) * limit;
 		const films = await this.model
 			.find()
@@ -103,31 +104,43 @@ export default class FilmsManagerMongo implements StarWars {
 
 	async getFiltered(
 		paginate: { page: number },
-		data: {
-			queries: { field: string; value: string }[];
-		}
+		field: string,
+		value: string
 	): Promise<object> {
-		const { page } = paginate;
-		const { queries } = data;
-		const limit = 10;
+		let { page } = paginate;
+		if (!page) page = 1;
+		const limit = 12;
+
 		const matchStage = {
 			$match: {
-				$and: queries.map((query) => ({
-					[query.field]: { $regex: query.value, $options: "i" },
-				})),
+				$or: [
+					{ [field]: { $regex: value, $options: "i" } },
+					{ [field]: parseFloat(value) },
+				],
 			},
 		};
+
 		const films = await this.model.aggregate([
 			matchStage,
 			{
 				$lookup: {
 					from: "planets",
-					let: { planet: "$planet" },
+					let: { planets: "$planets" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$planet"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$planets" },
+										then: { $in: ["$url", "$$planets"] },
+										else: { $eq: ["$url", "$$planets"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "planetsDetails",
+					as: "planets",
 				},
 			},
 			{
@@ -135,21 +148,41 @@ export default class FilmsManagerMongo implements StarWars {
 					from: "starships",
 					let: { starships: "$starships" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$starships"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$starships" },
+										then: { $in: ["$url", "$$starships"] },
+										else: { $eq: ["$url", "$$starships"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "starshipsDetails",
+					as: "starships",
 				},
 			},
 			{
 				$lookup: {
 					from: "people",
-					let: { characters: "$characters" },
+					let: { people: "$characters" },
 					pipeline: [
-						{ $match: { $expr: { $in: ["$url", "$$characters"] } } },
+						{
+							$match: {
+								$expr: {
+									$cond: {
+										if: { $isArray: "$$people" },
+										then: { $in: ["$url", "$$people"] },
+										else: { $eq: ["$url", "$$people"] },
+									},
+								},
+							},
+						},
 						{ $project: { _id: 1, name: 1 } },
 					],
-					as: "peopleDetails",
+					as: "characters",
 				},
 			},
 		]);
